@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Description of AccueilController
+ * Description of AccueilController test
  *
  * @author emds
  */
