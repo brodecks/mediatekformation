@@ -9,6 +9,7 @@ namespace App\Controller\admin;
 
 use App\Entity\Formation;
 use App\Form\FormationType;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\CategorieRepository;
 use App\Repository\FormationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -40,7 +41,7 @@ class AdminFormationsController extends AbstractController{
         $this->categorieRepository= $categorieRepository;
     }
     
-    #[Route('/admin', name: 'admin.formations')]
+    #[Route('/admin/formations', name: 'admin.formations')]
     public function index(): Response{
         $formations = $this->formationRepository->findAll();
         $categories = $this->categorieRepository->findAll();
