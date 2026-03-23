@@ -33,6 +33,7 @@ class PlaylistsController extends AbstractController {
      * @var CategorieRepository
      */
     private $categorieRepository;    
+    private const CHEMIN_PLAYLIST = "pages/playlists.html.twig";
     
     function __construct(PlaylistRepository $playlistRepository, 
             CategorieRepository $categorieRepository,
@@ -50,7 +51,7 @@ class PlaylistsController extends AbstractController {
     public function index(): Response{
         $playlists = $this->playlistRepository->findAllOrderByName('ASC');
         $categories = $this->categorieRepository->findAll();
-        return $this->render("pages/playlists.html.twig", [
+        return $this->render(self::CHEMIN_PLAYLIST, [
             'playlists' => $playlists,
             'categories' => $categories            
         ]);
@@ -62,9 +63,14 @@ class PlaylistsController extends AbstractController {
             case "name":
                 $playlists = $this->playlistRepository->findAllOrderByName($ordre);
                 break;
+            case "nbFormations":
+                $playlists = $this->playlistRepository->findAllOrderByNbFormations($ordre);
+                break;
+            default :
+                break;
         }
         $categories = $this->categorieRepository->findAll();
-        return $this->render("pages/playlists.html.twig", [
+        return $this->render(self::CHEMIN_PLAYLIST, [
             'playlists' => $playlists,
             'categories' => $categories            
         ]);
@@ -75,7 +81,7 @@ class PlaylistsController extends AbstractController {
         $valeur = $request->get("recherche");
         $playlists = $this->playlistRepository->findByContainValue($champ, $valeur, $table);
         $categories = $this->categorieRepository->findAll();
-        return $this->render("pages/playlists.html.twig", [
+        return $this->render(self::CHEMIN_PLAYLIST, [
             'playlists' => $playlists,
             'categories' => $categories,            
             'valeur' => $valeur,
@@ -92,7 +98,7 @@ class PlaylistsController extends AbstractController {
             'playlist' => $playlist,
             'playlistcategories' => $playlistCategories,
             'playlistformations' => $playlistFormations
-        ]);        
+        ]);
     }       
     
 }
