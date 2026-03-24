@@ -2,22 +2,21 @@
 
 namespace App\Form;
 
-use App\Entity\Playlist;
+use App\Entity\Categorie;
+use App\Entity\Formation;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PlaylistType extends AbstractType
+class CategorieType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('name', null, [
-                'label' => 'Playlist',
-            ])
-            ->add('description', null, [
-                'required' => false,
+                'label' => 'Ajouter une categorie',
             ])
             ->add('submit', SubmitType::class)
         ;
@@ -26,7 +25,7 @@ class PlaylistType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Playlist::class,
+            'data_class' => Categorie::class,
         ]);
     }
 }

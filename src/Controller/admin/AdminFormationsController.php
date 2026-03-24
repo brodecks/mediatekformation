@@ -41,7 +41,7 @@ class AdminFormationsController extends AbstractController{
         $this->categorieRepository= $categorieRepository;
     }
     
-    #[Route('/admin/formations', name: 'admin.formations')]
+    #[Route('/admin', name: 'admin.formations')]
     public function index(): Response{
         $formations = $this->formationRepository->findAll();
         $categories = $this->categorieRepository->findAll();
