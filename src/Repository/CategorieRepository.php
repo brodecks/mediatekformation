@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repository;
 
 use App\Entity\Categorie;
@@ -7,30 +6,45 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * Repository de gestion des catégories
  * @extends ServiceEntityRepository<Categorie>
  */
 class CategorieRepository extends ServiceEntityRepository
 {
+    /**
+     * Constructeur de la classe
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Categorie::class);
     }
 
+    /**
+     * Persiste une catégorie en base de données
+     * @param Categorie $entity
+     * @return void
+     */
     public function add(Categorie $entity): void
     {
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();
     }
 
+    /**
+     * Supprime une catégorie de la base de données
+     * @param Categorie $entity
+     * @return void
+     */
     public function remove(Categorie $entity): void
     {
         $this->getEntityManager()->remove($entity);
         $this->getEntityManager()->flush();
     }
-    
+
     /**
      * Retourne la liste des catégories des formations d'une playlist
-     * @param type $idPlaylist
+     * @param int $idPlaylist
      * @return array
      */
     public function findAllForOnePlaylist($idPlaylist): array{
@@ -39,9 +53,8 @@ class CategorieRepository extends ServiceEntityRepository
                 ->join('f.playlist', 'p')
                 ->where('p.id=:id')
                 ->setParameter('id', $idPlaylist)
-                ->orderBy('c.name', 'ASC')   
+                ->orderBy('c.name', 'ASC')
                 ->getQuery()
-                ->getResult();        
-    }  
-    
+                ->getResult();
+    }
 }

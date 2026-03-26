@@ -1,10 +1,4 @@
 <?php
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Scripting/PHPClass.php to edit this template
- */
-
 namespace App\Controller\admin;
 
 use App\Entity\Formation;
@@ -20,31 +14,42 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Description of AdminPlaylistsController
+ * Contrôleur de gestion des playlists dans la partie admin
  *
  * @author rapha
  */
 class AdminPlaylistsController extends AbstractController{
+    
     /**
-     * 
+     * Repository des playlists
      * @var PlaylistRepository
      */
     private $playlistRepository;
     
     /**
-     * 
+     * Repository des formations
      * @var FormationRepository
      */
     private $formationRepository;
     
     /**
-     * 
+     * Repository des catégories
      * @var CategorieRepository
      */
-    private $categorieRepository;    
+    private $categorieRepository;
+    
+    /**
+     * Chemin vers le template de la liste des playlists
+     */
     private const CHEMIN_PLAYLIST = "admin/admin.playlists.html.twig";
     
-    function __construct(PlaylistRepository $playlistRepository, 
+    /**
+     * Constructeur de la classe
+     * @param PlaylistRepository $playlistRepository
+     * @param CategorieRepository $categorieRepository
+     * @param FormationRepository $formationRespository
+     */
+    public function __construct(PlaylistRepository $playlistRepository, 
             CategorieRepository $categorieRepository,
             FormationRepository $formationRespository) {
         $this->playlistRepository = $playlistRepository;
@@ -53,7 +58,7 @@ class AdminPlaylistsController extends AbstractController{
     }
     
     /**
-     * @Route("/admin/playlists", name="admin.playlists")
+     * Affiche la liste de toutes les playlists triées par nom
      * @return Response
      */
     #[Route('/admin/playlists', name: 'admin.playlists')]
@@ -66,6 +71,11 @@ class AdminPlaylistsController extends AbstractController{
         ]);
     }
     
+    /**
+     * Supprime une playlist à partir de son identifiant
+     * @param int $id
+     * @return Response
+     */
     #[Route('/admin/playlist/suppr/{id}', name: 'admin.playlist.suppr')]
     public function suppr(int $id): Response{
         $playlist = $this->playlistRepository->find($id);
@@ -73,6 +83,12 @@ class AdminPlaylistsController extends AbstractController{
         return $this->redirectToRoute('admin.playlists');
     }
     
+    /**
+     * Affiche le formulaire d'édition d'une playlist et traite sa soumission
+     * @param int $id
+     * @param Request $request
+     * @return Response
+     */
     #[Route('/admin/playlist/edit/{id}', name: 'admin.playlist.edit')]
     public function edit(int $id, Request $request): Response{
         $playlist = $this->playlistRepository->find($id);
@@ -90,6 +106,11 @@ class AdminPlaylistsController extends AbstractController{
         ]);
     }
     
+    /**
+     * Affiche le formulaire d'ajout d'une playlist et traite sa soumission
+     * @param Request $request
+     * @return Response
+     */
     #[Route('/admin/playlist/ajout', name: 'admin.playlist.ajout')]
     public function ajout(Request $request): Response{
         $playlist = new Playlist();
@@ -107,7 +128,13 @@ class AdminPlaylistsController extends AbstractController{
         ]);
     }
     
-    #[Route('/admin/tri/{champ}/{ordre}', name: 'admin.playlists.sort')]
+    /**
+     * Affiche la liste des playlists triées sur un champ donné
+     * @param string $champ
+     * @param string $ordre
+     * @return Response
+     */
+    #[Route('/admin/playlists/tri/{champ}/{ordre}', name: 'admin.playlists.sort')]
     public function sort($champ, $ordre): Response{
         switch($champ){
             case "name":
@@ -116,7 +143,7 @@ class AdminPlaylistsController extends AbstractController{
             case "nbFormations":
                 $playlists = $this->playlistRepository->findAllOrderByNbFormations($ordre);
                 break;
-            default :
+            default:
                 break;
         }
         $categories = $this->categorieRepository->findAll();
@@ -124,21 +151,36 @@ class AdminPlaylistsController extends AbstractController{
             'playlists' => $playlists,
             'categories' => $categories            
         ]);
-    }          
+    }
 
-    #[Route('/admin/recherche/{champ}/{table}', name: 'admin.playlists.findallcontain')]
+    /**
+     * Affiche les playlists dont un champ contient une valeur recherchée
+     * @param string $champ
+     * @param Request $request
+     * @param string $table
+     * @return Response
+     */
+    #[Route('/admin/playlists/recherche/{champ}/{table}', name: 'admin.playlists.findallcontain')]
     public function findAllContain($champ, Request $request, $table=""): Response{
-        $valeur = $request->get("recherche");
-        $playlists = $this->playlistRepository->findByContainValue($champ, $valeur, $table);
-        $categories = $this->categorieRepository->findAll();
-        return $this->render(self::CHEMIN_PLAYLIST, [
-            'playlists' => $playlists,
-            'categories' => $categories,            
-            'valeur' => $valeur,
-            'table' => $table
-        ]);
+        if($this->isCsrfTokenValid('filtre_'.$champ, $request->get('_token'))){    
+            $valeur = $request->get("recherche");
+            $playlists = $this->playlistRepository->findByContainValue($champ, $valeur, $table);
+            $categories = $this->categorieRepository->findAll();
+            return $this->render(self::CHEMIN_PLAYLIST, [
+                'playlists' => $playlists,
+                'categories' => $categories,            
+                'valeur' => $valeur,
+                'table' => $table
+            ]);
+        }
+        return $this->redirectToRoute('admin.playlists');
     }  
 
+    /**
+     * Affiche le détail d'une playlist avec ses formations et ses catégories
+     * @param int $id
+     * @return Response
+     */
     #[Route('/admin/playlist/{id}', name: 'admin.playlists.showone')]
     public function showOne($id): Response{
         $playlist = $this->playlistRepository->find($id);

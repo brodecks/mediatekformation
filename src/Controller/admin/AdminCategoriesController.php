@@ -1,10 +1,4 @@
 <?php
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Scripting/PHPClass.php to edit this template
- */
-
 namespace App\Controller\admin;
 
 use App\Entity\Categorie;
@@ -17,18 +11,32 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Description of AdminCategoriesController
+ * Contrôleur de gestion des catégories dans la partie admin
  *
  * @author rapha
  */
 class AdminCategoriesController extends AbstractController{
+    
+    /**
+     * Repository des catégories
+     * @var CategorieRepository
+     */
     private $categorieRepository;
     
+    /**
+     * Constructeur de la classe
+     * @param CategorieRepository $categorieRepository
+     */
     public function __construct(CategorieRepository $categorieRepository) {
         $this->categorieRepository = $categorieRepository;
     }
     
-    #[Route('/admin/categories',name: 'admin.categories')]
+    /**
+     * Affiche la liste des catégories et le formulaire d'ajout
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/admin/categories', name: 'admin.categories')]
     public function index(Request $request): Response{
         $categorie = new Categorie();
         $formCategorie = $this->createForm(CategorieType::class, $categorie);
@@ -39,13 +47,17 @@ class AdminCategoriesController extends AbstractController{
             return $this->redirectToRoute('admin.categories');
         }
         $categories = $this->categorieRepository->findAll();
-
         return $this->render("admin/admin.categories.html.twig", [
             'categories' => $categories,
             'formcategorie' => $formCategorie->createView()
         ]);
     }
     
+    /**
+     * Supprime une catégorie si elle n'est pas utilisée par des formations
+     * @param int $id
+     * @return Response
+     */
     #[Route('/admin/categorie/suppr/{id}', name: 'admin.categorie.suppr')]
     public function suppr(int $id): Response {
         $categorie = $this->categorieRepository->find($id);
@@ -56,21 +68,23 @@ class AdminCategoriesController extends AbstractController{
                 $this->categorieRepository->remove($categorie, true);
             }
         }
-
         return $this->redirectToRoute('admin.categories');
     }
     
+    /**
+     * Affiche le formulaire d'ajout d'une catégorie et traite sa soumission
+     * @param Request $request
+     * @return Response
+     */
     #[Route('/admin/categorie/ajout', name: 'admin.categorie.ajout')]
     public function ajout(Request $request): Response{
         $categorie = new Categorie();
         $formCategorie = $this->createForm(CategorieType::class, $categorie);
-
         $formCategorie->handleRequest($request);
         if($formCategorie->isSubmitted() && $formCategorie->isValid()){
             $this->categorieRepository->add($categorie);
             return $this->redirectToRoute('admin.categories');
         }
-
         return $this->render("admin/admin.categories.html.twig", [
             'categorie' => $categorie,
             'formcategorie' => $formCategorie->createView()

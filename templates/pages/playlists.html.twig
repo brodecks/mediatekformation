@@ -18,8 +18,8 @@
                 </th>
                 <th class="text-left align-top" scope="col">
                     Nombre de formations<br />
-                    <a href="{{ path('playlists.sort', {champ:'nbFormations', ordre:'ASC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true"><</a>
-                    <a href="{{ path('playlists.sort', {champ:'nbFormations', ordre:'DESC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true">></a>
+                    <a href="{{ path('playlists.sort', {champ:'nbFormations', ordre:'DESC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true"><</a>
+                    <a href="{{ path('playlists.sort', {champ:'nbFormations', ordre:'ASC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true">></a>
                 </th>
                 <th class="text-left align-top" scope="col">
                     Catégories
@@ -34,7 +34,8 @@
                                     value="{{ categorie.id }}">{{ categorie.name }}
                                 </option>
                             {% endfor %}
-                        </select>                    
+                        </select>
+                        <input type="hidden" name="_token" value="{{ csrf_token('filtre_id') }}">
                     </form>            
                 </th>
                 <th class="text-center align-top" scope="col">
