@@ -1,7 +1,7 @@
 # Mediatekformation (projet d'évolution)
 
 Lien vers le dépôt d'origine : https://github.com/CNED-SLAM/mediatekformation (le README de ce dépôt contient la présentation complète de l'application d'origine)<br>
-Lien vers le site en ligne : mesvoyages.worldlite.ca/mediatekformation/public
+Lien vers le site en ligne : https://mesvoyages.worldlite.ca/mediatekformation/public
 
 > Ce README-ci présente uniquement les fonctionnalités ajoutées dans le cadre des tâches 1 à 4, l'installation et les tests en local / en ligne.
 
